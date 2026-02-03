@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm run build:submodule && next dev",
+    "build": "npm run build:submodule && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:submodule": "npm --prefix ./tba-api-client-javascript install && npm --prefix ./tba-api-client-javascript run build",
+    "link:submodule": "npm --prefix ./tba-api-client-javascript install && npm --prefix ./tba-api-client-javascript run build && npm --prefix ./tba-api-client-javascript link && npm link tba-api-client-javascript",
+    "postinstall": "npm run build:submodule"
   },
   "dependencies": {
     "@prisma/client": "^7.3.0",
