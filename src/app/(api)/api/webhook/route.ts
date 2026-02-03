@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
-import { ApiClient } from "tba-api-v3client";
 
 function validateHMAC(payload: string, hmac: string | null): boolean {
     const secret = process.env.WEBHOOK_SECRET;
@@ -34,12 +33,20 @@ function validateHMAC(payload: string, hmac: string | null): boolean {
 }
 
 function validateData(data: any): boolean {
-    // Implement data validation logic here
+    if (!data || typeof data !== "object") {
+        return false;
+    }
+
+    if (!data.hasOwnProperty("message_type") || !data.hasOwnProperty("message_data")) {
+        return false;
+    }
+
     return true;
 }
 
 function processWebhookData(data: any) {
-    // Implement webhook data processing logic here
+    // MARK: Implement webhook data processing logic here
+    console.log(data);
 }
 
 

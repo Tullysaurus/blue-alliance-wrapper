@@ -10,15 +10,38 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider     = "postgresql"
+  relationMode = "prisma"
 }
 
-model Team {
-  id          Int      @id @default(autoincrement())
-  team_number Int      @unique
+model Award {
+  id                    Int            @id @default(autoincrement())
+  name                  String
+  awardType             Int
+  eventKey              String
+  recipientList         AwardRecipient @relation(fields: [awardRecipientTeamKey], references: [teamKey])
+  year                  Int
+  
+  awardRecipientTeamKey Int
+}
 
-  name        String
+model AwardRecipient {
+  teamKey Int     @unique
+  awardee String?
+  awards  Award[]
+}
 
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+model DistrictList {
+  abbreviation String @unique
+  displayName  String
+  key          String @unique
+  year         Int
+}
+
+model DistrictRanking {
+  teamKey     String @unique
+  rank        Int    @unique
+  rookieBonus Int?
+  pointTotal  Int
+  // eventPoints     DistrictRankingEvenPoints
 }
