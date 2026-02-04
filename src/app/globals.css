@@ -14,15 +14,15 @@
 
   /* Surfaces (less blue tint) */
   --surface: #f6f6f9; /* slightly warmer neutral */
-
-  /* Brighter blue accent */
-  --accent: #3ea8ff; /* brighter blue */
-  --accent-500: #60bfff; /* hover */
-  --accent-300: #9fe0ff; /* subtle */
+  /* Primary / Accent (use Material Indigo as primary) */
+  --primary: #3f51b5; /* indigo 500 */
+  --accent: var(--primary);
+  --accent-500: #0b0c0e; /* hover / slightly lighter */
+  --accent-300: #9fa8da; /* subtle */
   --accent-foreground: #ffffff;
 
-  /* Focus / ring (match brighter accent) */
-  --ring: 0 0 0 4px rgba(62,168,255,0.12);
+  /* Focus / ring (match primary accent) */
+  --ring: 0 0 0 4px rgba(63,81,181,0.12);
 }
 
 /* removed @theme inline (nonstandard) */
@@ -36,22 +36,28 @@
     --surface: #0f1113; /* neutral dark surface */
 
     /* Brighter accents on dark */
-    --accent: #60bfff; /* brighter blue */
-    --accent-500: #7fd7ff;
-    --accent-300: #bfefff;
+    --primary: #3f51b5; /* keep same indigo token */
+    /* use lighter indigo tones for dark backgrounds */
+    --accent: #7f8eff;
+    --accent-500: #99a7ff;
+    --accent-300: #cfd8ff;
     --accent-foreground: #0b0c0f;
 
-    --ring: 0 0 0 4px rgba(96,191,255,0.12);
+    --ring: 0 0 0 4px rgba(127,142,255,0.12);
   }
 }
 
 footer {
-  border-top: 1px solid var(--accent-300);
+  background-color: var(--primary);
 }
 
 /* Global base styles */
 html, body, #__next {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: none;
 }
 
 body {
@@ -161,6 +167,6 @@ textarea {
 
 /* Small helpers for contrast where needed */
 .bg-accent-soft {
-  background: linear-gradient(180deg, rgba(37,99,235,0.06), rgba(59,130,246,0.02));
+  background: linear-gradient(180deg, rgba(63,81,181,0.06), rgba(101,115,209,0.02));
 }
 

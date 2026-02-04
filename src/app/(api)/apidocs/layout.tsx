@@ -6,9 +6,8 @@ export default function ApiDocs({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative min-h-screen">
+    <div>
       {children}
-      <Footer />
     </div>
   );
 }

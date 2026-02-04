@@ -10,59 +10,115 @@ generator client {
 }
 
 datasource db {
-  provider     = "postgresql"
-  relationMode = "prisma"
+  provider = "postgresql"
 }
 
 model Event {
-  key       String @unique
+  id Int @id @default(autoincrement())
+
+  // TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.  
+  key       String
+  // Official name of event on record either provided by FIRST or organizers of offseason event.
   name      String
+  // Event short code, as provided by FIRST.
   eventCode String
+  // Event Type, meaning currently unknown
   eventType Int
 
-  district  DistrictList
+  // District information
+  district District?
+
   city      String?
   stateProv String?
   country   String?
-
   startDate DateTime
   endDate   DateTime
+  week      Int
   year      Int
 
+  // Same as `name` but doesn't include event specifiers, such as 'Regional' or 'District'. May be null.
   shortName       String?
+  // Event Type, eg Regional, District, or Offseason.
   eventTypeString String
-  week            Int?
 
-  // ===== Profile Information ===== \\
-  address    String?
-  postalCode String?
-
+  address      String?
+  postalCode   String?
   gmapsPlaceId String?
   gmapsUrl     String?
-  lat          Int?
-  lng          Int?
-
+  lat          Float?
+  lng          Float?
   locationName String?
   timezone     String?
   website      String?
 
+  // The FIRST internal Event ID, used to link to the event on the FRC webpage.
   firstEventId   String?
+  // Public facing event code used by FIRST (on frc-events.firstinspires.org, for example)
   firstEventCode String?
 
-  // webcasts Webcast[]
-  divisionKeys String[]
+  webcasts Webcast[]
 
-  parentEventKey    String?
+  // An array of event keys for the divisions at this event.
+  divisionKeys   String[]
+  // The TBA Event key that represents the event's parent. Used to link back to the event from a division event. It is also the inverse relation of `divison_keys`.
+  parentEventKey String?
+
+  // Event Type, meaning currently unknown
   playoffType       Int?
-  playoffTypeString String
+  // String representation of the `playoff_type`, or null.
+  playoffTypestring String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model DistrictList {
+model District {
+  id Int @id @default(autoincrement())
+
   key          String @unique
   abbreviation String
   displayName  String
   year         Int
 
-  eventKey     String
-  events       Event[] 
+  eventId Int?   @unique
+  event   Event? @relation(fields: [eventId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum WebcastEnum {
+  youtube
+  twitch
+  ustream
+  iframe
+  html5
+  rtmp
+  livestream
+  direct_link
+  mms
+  justin
+  stemtv
+  dacast
+}
+
+model Webcast {
+  id Int @id @default(autoincrement())
+
+  // Type of webcast, typically descriptive of the streaming provider.
+  type WebcastEnum
+
+  // Type specific channel information. May be the YouTube stream, or Twitch channel name. In the case of iframe types, contains HTML to embed the stream in an HTML iframe.
+  channel String
+
+  date DateTime?
+
+  // File identification as may be required for some types. May be null.
+  file String?
+
+  eventId Int?
+  events Event? @relation(fields:[eventId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
