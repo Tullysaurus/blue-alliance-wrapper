@@ -14,34 +14,55 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Award {
-  id                    Int            @id @default(autoincrement())
-  name                  String
-  awardType             Int
-  eventKey              String
-  recipientList         AwardRecipient @relation(fields: [awardRecipientTeamKey], references: [teamKey])
-  year                  Int
-  
-  awardRecipientTeamKey Int
-}
+model Event {
+  key       String @unique
+  name      String
+  eventCode String
+  eventType Int
 
-model AwardRecipient {
-  teamKey Int     @unique
-  awardee String?
-  awards  Award[]
+  district  DistrictList
+  city      String?
+  stateProv String?
+  country   String?
+
+  startDate DateTime
+  endDate   DateTime
+  year      Int
+
+  shortName       String?
+  eventTypeString String
+  week            Int?
+
+  // ===== Profile Information ===== \\
+  address    String?
+  postalCode String?
+
+  gmapsPlaceId String?
+  gmapsUrl     String?
+  lat          Int?
+  lng          Int?
+
+  locationName String?
+  timezone     String?
+  website      String?
+
+  firstEventId   String?
+  firstEventCode String?
+
+  // webcasts Webcast[]
+  divisionKeys String[]
+
+  parentEventKey    String?
+  playoffType       Int?
+  playoffTypeString String
 }
 
 model DistrictList {
-  abbreviation String @unique
-  displayName  String
   key          String @unique
+  abbreviation String
+  displayName  String
   year         Int
-}
 
-model DistrictRanking {
-  teamKey     String @unique
-  rank        Int    @unique
-  rookieBonus Int?
-  pointTotal  Int
-  // eventPoints     DistrictRankingEvenPoints
+  eventKey     String
+  events       Event[] 
 }
