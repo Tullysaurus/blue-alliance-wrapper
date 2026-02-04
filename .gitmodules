@@ -1,4 +1,4 @@
 [submodule "tba-api-client-javascript"]
 	path = tba-api-client-javascript
-	url = https://github.com/TBA-API/tba-api-client-javascript.git
+	url = https://github.com/Tullysaurus/tba-api-client-javascript.git
 	ignore = dirty
