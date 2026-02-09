@@ -12,3 +12,5 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// https://console.cloud.google.com/bigquery?project=tbatv-prod-hrd&p=tbatv-prod-hrd&d=the_blue_alliance&page=dataset&ws=!1m4!1m3!3m2!1stbatv-prod-hrd!2sthe_blue_alliance
