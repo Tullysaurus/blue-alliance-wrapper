@@ -14,3 +14,33 @@ datasource db {
 }
 
 // https://console.cloud.google.com/bigquery?project=tbatv-prod-hrd&p=tbatv-prod-hrd&d=the_blue_alliance&page=dataset&ws=!1m4!1m3!3m2!1stbatv-prod-hrd!2sthe_blue_alliance
+
+model Team {
+  id Int @id @default(autoincrement())
+
+  rookieYear String
+
+  homeCmp String
+
+  firstTpidYear Int
+
+  website String
+
+  schoolName String
+  address    String
+  postalCode String
+  city       String
+  country    String
+  stateProv  String
+
+  motto String
+
+  firstTpid Int
+
+  name       String
+  nickname   String
+  teamNumber Int    @unique
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
