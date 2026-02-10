@@ -15,6 +15,39 @@ datasource db {
 
 // https://console.cloud.google.com/bigquery?project=tbatv-prod-hrd&p=tbatv-prod-hrd&d=the_blue_alliance&page=dataset&ws=!1m4!1m3!3m2!1stbatv-prod-hrd!2sthe_blue_alliance
 
+model NormalizedLocation {
+  id Int @id @default(autoincrement())
+
+
+  country String?
+  countryShort String?
+
+  stateProv String?
+  stateProvShort String?
+
+  formattedAddress String?
+
+  city String?
+  name String?
+  street String?
+  postalCode String?
+  streetNumber String?
+
+  placeDetails Bytes?
+  placeId String?
+
+  lat Float?
+  long Float?
+
+
+  eventId Int? @unique
+  event Event? @relation(fields: [eventId], references: [id])
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+
 model Team {
   id Int @id @default(autoincrement())
 
@@ -40,6 +73,181 @@ model Team {
   name       String
   nickname   String
   teamNumber Int    @unique
+
+  awards Award[]
+  districtTeams DistrictTeam[]
+  eventTeams EventTeam[]
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model DistrictTeam {
+  id Int @id @default(autoincrement())
+
+  teamNumber Int
+  team Team @relation(fields: [teamNumber], references: [teamNumber])
+
+  year Int?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model EventTeam {
+  id Int @id @default(autoincrement())
+
+  status Bytes?
+
+  teamId Int
+  team Team @relation(fields: [teamId], references: [id])
+
+  eventId Int
+  event Event @relation(fields: [eventId], references: [id])
+
+  year Int?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+
+
+
+model Award {
+  id Int @id @default(autoincrement())
+
+  teamList Team[]
+
+  event Event? @relation(fields:[eventId], references: [id])
+  eventId Int?
+
+  awardType Int?
+
+  nameStr String?
+
+  recipientList Json
+
+  year Int?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+
+
+
+model Event {
+  id Int @id @default(autoincrement())
+
+  parentEventId Int?
+  parentEvent Event? @relation("ChildEvents", fields: [parentEventId], references: [id])
+  
+  childEvents Event[] @relation("ChildEvents")
+  
+
+  name String?
+  eventDistrict Int?
+  eventType Int?
+  eventShort String?
+  firstCode String?
+  shortName String?
+
+  playoffType Int?
+
+  facebookEid String?
+  website String?
+  webcastUrl String?
+  webcastJson Json?
+
+  oprTeams Int?
+  oprs Float?
+  customHastag String?
+
+  districtKey String?
+
+
+  enablePredictions Boolean // mostly false
+  remapTeams Bytes? // mostly unused
+  rankings Json?
+  matchStats Json?
+
+
+  venue String?
+  city String?
+  venueAddress String?
+  stateProv String?
+  postalCode String?
+  country String?
+  location String? // mostly unused
+
+  normalizedLocation NormalizedLocation?
+
+
+  official Boolean?
+
+
+  awards Award[]
+  eventTeams EventTeam[]
+  districts District[]
+  matches Match[]
+  eventDetails EventDetails?
+
+  divisions String[]
+
+
+  startDate DateTime?
+  endDate DateTime?
+  timezoneId String?
+
+  year Int?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model District {
+  id Int @id @default(autoincrement())
+
+  displayName String?
+
+  rankings Bytes?
+  advancement Bytes?
+  elasticSearchName String?
+  abbreviation String?
+
+  eventId Int?
+  event Event? @relation(fields: [eventId], references: [id])
+
+  year Int?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Match {
+  id Int @id @default(autoincrement())
+
+  eventId Int?
+  event Event? @relation(fields: [eventId], references: [id])
+
+  year Int?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+
+
+model EventDetails {
+  id Int @id @default(autoincrement())
+
+  rankings Bytes?
+  matchStates Bytes?
+  districtPoints Bytes?
+  allianceSelections Bytes?
+  predictions Bytes?
+  playoffAdvancement Bytes?
+  rankings2 Bytes?
+  insights Bytes?
+
+  eventId Int @unique
+  event Event @relation(fields: [eventId], references: [id])
+
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
