@@ -18,35 +18,32 @@ datasource db {
 model NormalizedLocation {
   id Int @id @default(autoincrement())
 
-
-  country String?
+  country      String?
   countryShort String?
 
-  stateProv String?
+  stateProv      String?
   stateProvShort String?
 
   formattedAddress String?
 
-  city String?
-  name String?
-  street String?
-  postalCode String?
+  city         String?
+  name         String?
+  street       String?
+  postalCode   String?
   streetNumber String?
 
   placeDetails Bytes?
-  placeId String?
+  placeId      String?
 
-  lat Float?
+  lat  Float?
   long Float?
 
-
-  eventId Int? @unique
-  event Event? @relation(fields: [eventId], references: [id])
+  eventId Int?   @unique
+  event   Event? @relation(fields: [eventId], references: [id])
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
-
 
 model Team {
   id Int @id @default(autoincrement())
@@ -74,9 +71,10 @@ model Team {
   nickname   String
   teamNumber Int    @unique
 
-  awards Award[]
+  awards        Award[]
   districtTeams DistrictTeam[]
-  eventTeams EventTeam[]
+  eventTeams    EventTeam[]
+  matchTeams    MatchTeam[]
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -85,10 +83,13 @@ model Team {
 model DistrictTeam {
   id Int @id @default(autoincrement())
 
-  teamNumber Int
-  team Team @relation(fields: [teamNumber], references: [teamNumber])
+  districtId Int
+  district   District @relation(fields: [districtId], references: [id])
 
-  year Int?
+  teamNumber Int
+  team       Team @relation(fields: [teamNumber], references: [teamNumber])
+
+  year      Int?
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
@@ -99,105 +100,109 @@ model EventTeam {
   status Bytes?
 
   teamId Int
-  team Team @relation(fields: [teamId], references: [id])
+  team   Team @relation(fields: [teamId], references: [id])
 
   eventId Int
-  event Event @relation(fields: [eventId], references: [id])
+  event   Event @relation(fields: [eventId], references: [id])
 
-  year Int?
+  year      Int?
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
 
+model MatchTeam {
+  id Int @id @default(autoincrement())
 
+  teamKey String?
 
+  teamId Int
+  team   Team @relation(fields: [teamId], references: [id])
+
+  matchId Int
+  match   Match @relation(fields: [matchId], references: [id])
+
+  year      Int?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
 
 model Award {
   id Int @id @default(autoincrement())
 
   teamList Team[]
 
-  event Event? @relation(fields:[eventId], references: [id])
+  event   Event? @relation(fields: [eventId], references: [id])
   eventId Int?
 
   awardType Int?
 
   nameStr String?
 
-  recipientList Json
+  recipientList Json[]
 
-  year Int?
+  year      Int?
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
-
-
-
 
 model Event {
   id Int @id @default(autoincrement())
 
   parentEventId Int?
-  parentEvent Event? @relation("ChildEvents", fields: [parentEventId], references: [id])
-  
-  childEvents Event[] @relation("ChildEvents")
-  
+  parentEvent   Event? @relation("ChildEvents", fields: [parentEventId], references: [id])
 
-  name String?
+  childEvents Event[] @relation("ChildEvents")
+
+  name          String?
   eventDistrict Int?
-  eventType Int?
-  eventShort String?
-  firstCode String?
-  shortName String?
+  eventType     Int?
+  eventShort    String?
+  firstCode     String?
+  shortName     String?
 
   playoffType Int?
 
   facebookEid String?
-  website String?
-  webcastUrl String?
+  website     String?
+  webcastUrl  String?
   webcastJson Json?
 
-  oprTeams Int?
-  oprs Float?
+  oprTeams     Int[]
+  oprs         Float[]
   customHastag String?
 
   districtKey String?
 
-
   enablePredictions Boolean // mostly false
-  remapTeams Bytes? // mostly unused
-  rankings Json?
-  matchStats Json?
+  remapTeams        Bytes? // mostly unused
+  rankings          Json?
+  matchStats        Json?
 
-
-  venue String?
-  city String?
+  venue        String?
+  city         String?
   venueAddress String?
-  stateProv String?
-  postalCode String?
-  country String?
-  location String? // mostly unused
+  stateProv    String?
+  postalCode   String?
+  country      String?
+  location     String? // mostly unused
 
   normalizedLocation NormalizedLocation?
 
-
   official Boolean?
 
-
-  awards Award[]
-  eventTeams EventTeam[]
-  districts District[]
-  matches Match[]
+  awards       Award[]
+  eventTeams   EventTeam[]
+  districts    District[]
+  matches      Match[]
   eventDetails EventDetails?
 
   divisions String[]
 
-
-  startDate DateTime?
-  endDate DateTime?
+  startDate  DateTime?
+  endDate    DateTime?
   timezoneId String?
 
-  year Int?
+  year      Int?
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
@@ -207,15 +212,17 @@ model District {
 
   displayName String?
 
-  rankings Bytes?
-  advancement Bytes?
+  rankings          Bytes?
+  advancement       Bytes?
   elasticSearchName String?
-  abbreviation String?
+  abbreviation      String?
 
   eventId Int?
-  event Event? @relation(fields: [eventId], references: [id])
+  event   Event? @relation(fields: [eventId], references: [id])
 
-  year Int?
+  districtTeams DistrictTeam[]
+
+  year      Int?
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
@@ -223,31 +230,54 @@ model District {
 model Match {
   id Int @id @default(autoincrement())
 
-  eventId Int?
-  event Event? @relation(fields: [eventId], references: [id])
+  matchNumber Int?
+  game        String?
 
-  year Int?
+  compLevel String?
+
+  teams MatchTeam[]
+
+  predictedTime  DateTime?
+  time           DateTime?
+  timeString     String?
+  postResultTime DateTime?
+  actualTime     DateTime?
+
+  tbaVideos String[]
+  setNumber Int?
+
+  noAutoUpdate Boolean?
+  pushSent     Boolean?
+
+  alliances      Json?
+  scoreBreakdown Json?
+
+  youtubeVideos String[]
+
+  tiebreakMatchKey String?
+
+  eventId Int?
+  event   Event? @relation(fields: [eventId], references: [id])
+
+  year      Int?
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 }
 
-
-
 model EventDetails {
   id Int @id @default(autoincrement())
 
-  rankings Bytes?
-  matchStates Bytes?
-  districtPoints Bytes?
+  rankings           Bytes?
+  matchStates        Bytes?
+  districtPoints     Bytes?
   allianceSelections Bytes?
-  predictions Bytes?
+  predictions        Bytes?
   playoffAdvancement Bytes?
-  rankings2 Bytes?
-  insights Bytes?
+  rankings2          Bytes?
+  insights           Bytes?
 
-  eventId Int @unique
-  event Event @relation(fields: [eventId], references: [id])
-
+  eventId Int   @unique
+  event   Event @relation(fields: [eventId], references: [id])
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
