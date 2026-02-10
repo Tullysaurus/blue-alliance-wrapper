@@ -38,8 +38,9 @@ model NormalizedLocation {
   lat  Float?
   long Float?
 
-  eventId Int?   @unique
-  event   Event? @relation(fields: [eventId], references: [id])
+  event Event?
+
+  team Team?
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -62,6 +63,9 @@ model Team {
   city       String
   country    String
   stateProv  String
+
+  normalizedLocationId Int?                @unique
+  normalizedLocation   NormalizedLocation? @relation(fields: [normalizedLocationId], references: [id])
 
   motto String
 
@@ -186,7 +190,8 @@ model Event {
   country      String?
   location     String? // mostly unused
 
-  normalizedLocation NormalizedLocation?
+  normalizedLocationId Int?                @unique
+  normalizedLocation   NormalizedLocation? @relation(fields: [normalizedLocationId], references: [id])
 
   official Boolean?
 
